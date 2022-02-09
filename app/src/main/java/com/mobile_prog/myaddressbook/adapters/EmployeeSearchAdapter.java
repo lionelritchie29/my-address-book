@@ -7,12 +7,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mobile_prog.myaddressbook.R;
 import com.mobile_prog.myaddressbook.models.Employee;
+import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.ImageLoaderService;
+import com.mobile_prog.myaddressbook.views.EmployeeSearchFragment;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,13 +25,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import retrofit2.Callback;
+
 public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAdapter.ViewHolder>{
 
     private List<Employee> employees;
     private View view;
+    private EmployeeSearchFragment fragment;
 
-    public EmployeeSearchAdapter(List<Employee> employees) {
+    public EmployeeSearchAdapter(List<Employee> employees, EmployeeSearchFragment fragment) {
         this.employees = employees;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -38,12 +45,13 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
                 .inflate(R.layout.employee_card, parent, false);
         this.view = view;
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, fragment);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Employee emp = employees.get(position);
+        holder.setEmployeeId(emp.getEmployeeId());
         String name = emp.getName().getFirst() + " " + emp.getName().getLast();
         String city = emp.getLocation().getCity() + ", " + emp.getLocation().getCountry();
         String phone = emp.getCell() + " / " + emp.getPhone();
@@ -79,14 +87,28 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
         private TextView employeePhoneTxt;
         private TextView employeeMemberSinceTxt;
         private ImageView employeeImg;
+        private EmployeeSearchFragment frg;
+        private int id;
 
-        public ViewHolder(@NonNull View view) {
+        public ViewHolder(@NonNull View view, EmployeeSearchFragment frg) {
             super(view);
+            this.frg = frg;
             this.employeeNameTxt = view.findViewById(R.id.employee_card_name);
             this.employeeCityTxt = view.findViewById(R.id.employee_card_city);
             this.employeePhoneTxt = view.findViewById(R.id.employee_card_phone);
             this.employeeMemberSinceTxt = view.findViewById(R.id.employee_card_member_since);
             this.employeeImg = view.findViewById(R.id.employee_card_img);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    frg.onEmployeeClicked(id);
+                }
+            });
+        }
+
+        public void setEmployeeId(int id) {
+            this.id = id;
         }
 
         public TextView getEmployeeNameTxt() {

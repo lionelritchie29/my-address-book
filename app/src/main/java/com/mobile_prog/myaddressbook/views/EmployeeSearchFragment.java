@@ -1,7 +1,9 @@
 package com.mobile_prog.myaddressbook.views;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +30,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EmployeeSearchFragment extends Fragment {
 
+    static interface EmployeeListListener {
+        void itemClicked(int id);
+    }
+
+    private EmployeeListListener listener;
+
     private RecyclerView rv = null;
 
     public EmployeeSearchFragment() {
@@ -39,10 +47,20 @@ public class EmployeeSearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private void setRecyclerView() {
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.listener = (EmployeeListListener) context;
+    }
+
+    public void onEmployeeClicked(int employeeId) {
+        if (listener != null) {
+            listener.itemClicked(employeeId);
+        }
     }
 
     private void fetchEmployees() {
+        EmployeeSearchFragment fragment = this;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -57,7 +75,7 @@ public class EmployeeSearchFragment extends Fragment {
                 {
                     Response resp = response.body();
                     List<Employee> employees = resp.getEmployees();
-                    EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(employees);
+                    EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(employees, fragment);
                     rv.setLayoutManager(new LinearLayoutManager(getContext()));
                     rv.setAdapter(adapter);
                 }

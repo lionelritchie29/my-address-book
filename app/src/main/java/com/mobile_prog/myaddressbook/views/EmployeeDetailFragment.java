@@ -3,64 +3,129 @@ package com.mobile_prog.myaddressbook.views;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
+import com.mobile_prog.myaddressbook.adapters.EmployeeSearchAdapter;
+import com.mobile_prog.myaddressbook.models.Employee;
+import com.mobile_prog.myaddressbook.models.Response;
+import com.mobile_prog.myaddressbook.services.EmployeeService;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EmployeeDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class EmployeeDetailFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private int employeeId;
+    private TextView nameTv;
+    private TextView cityTv;
+    private TextView phoneTv;
+    private TextView emailTv;
+    private TextView memberSinceTv;
+    private MapView mapView;
+    private GoogleMap googleMap;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public EmployeeDetailFragment() {
-        // Required empty public constructor
+    public EmployeeDetailFragment(int employeeId) {
+        this.employeeId = employeeId;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EmployeeDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EmployeeDetailFragment newInstance(String param1, String param2) {
-        EmployeeDetailFragment fragment = new EmployeeDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private void fetchEmployee(int id) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constant.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        EmployeeService service = retrofit.create(EmployeeService.class);
+        Call<Response> response =  service.getEmployee(id);
+        response.enqueue(new Callback<Response>() {
+
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                if (response.isSuccessful())
+                {
+                    Response resp = response.body();
+                    List<Employee> employees = resp.getEmployees();
+                    populateData(employees.get(0));
+                }
+                else
+                {
+                    Log.i("Hehe", "Request Error :: " + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                Log.i("Hehe", "Network Error :: " + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void populateData(Employee emp) {
+        nameTv.setText(emp.getName().getFirst() + " " + emp.getName().getLast());
+        cityTv.setText(emp.getLocation().getCity() + ", " + emp.getLocation().getCountry());
+        phoneTv.setText(emp.getCell() + " / " + emp.getPhone());
+        memberSinceTv.setText(emp.getRegistered().getDate());
+        emailTv.setText(emp.getEmail());
+
+        mapView.getMapAsync(map -> {
+            googleMap = map;
+            LatLng pos = new LatLng(
+                    Double.parseDouble(emp.getLocation().getCoordinates().getLatitude()),
+                    Double.parseDouble(emp.getLocation().getCoordinates().getLongitude()));
+            googleMap.addMarker(new MarkerOptions().position(pos).title("Location").snippet("Location"));
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(pos).zoom(12).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        });
+    }
+
+    private void initializeMap(View view, Bundle savedInstanceState) {
+        mapView = (MapView) view.findViewById(R.id.mapView);
+        Log.i("MapMap", mapView.toString());
+        mapView.onCreate(savedInstanceState);
+
+        mapView.onResume(); // needed to get the map to display immediately
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_employee_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_employee_detail, container, false);
+        initializeMap(view, savedInstanceState);
+        nameTv = view.findViewById(R.id.employee_detail_name);
+        cityTv = view.findViewById(R.id.employee_detail_city);
+        phoneTv = view.findViewById(R.id.employee_detail_phone);
+        memberSinceTv = view.findViewById(R.id.employee_detail_member_since);
+        emailTv = view.findViewById(R.id.employee_detail_email);
+        fetchEmployee(employeeId);
+        return view;
     }
 }
