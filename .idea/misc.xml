@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/drawable/edit_text_background.xml" value="0.2265625" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/activity_main.xml" value="0.28125" />
+        <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/employee_card.xml" value="0.33" />
+        <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/fragment_employee_search.xml" value="0.2838541666666667" />
       </map>
     </option>
   </component>

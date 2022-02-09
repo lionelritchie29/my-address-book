@@ -3,6 +3,8 @@ package com.mobile_prog.myaddressbook.views;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
+import com.mobile_prog.myaddressbook.adapters.EmployeeSearchAdapter;
 import com.mobile_prog.myaddressbook.models.Employee;
 import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.EmployeeService;
@@ -25,6 +28,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EmployeeSearchFragment extends Fragment {
 
+    private RecyclerView rv = null;
+
     public EmployeeSearchFragment() {
         // Required empty public constructor
     }
@@ -32,6 +37,9 @@ public class EmployeeSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    private void setRecyclerView() {
     }
 
     private void fetchEmployees() {
@@ -48,10 +56,10 @@ public class EmployeeSearchFragment extends Fragment {
                 if (response.isSuccessful())
                 {
                     Response resp = response.body();
-                    Log.i("Hehe", resp.getNim());
-                    Log.i("Hehe", resp.getNama());
-                    Log.i("Hehe", String.valueOf(resp.getEmployees().size()));
-                    Log.i("Hehe", resp.toString());
+                    List<Employee> employees = resp.getEmployees();
+                    EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(employees);
+                    rv.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rv.setAdapter(adapter);
                 }
                 else
                 {
@@ -69,6 +77,9 @@ public class EmployeeSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_employee_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_employee_search, container, false);
+        this.rv = view.findViewById(R.id.employee_search_rv);
+        fetchEmployees();
+        return view;
     }
 }
