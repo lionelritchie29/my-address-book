@@ -1,8 +1,11 @@
 package com.mobile_prog.myaddressbook.adapters;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +19,7 @@ import com.mobile_prog.myaddressbook.models.Employee;
 import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.ImageLoaderService;
 import com.mobile_prog.myaddressbook.views.EmployeeSearchFragment;
+import com.mobile_prog.myaddressbook.views.MainActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,10 +36,17 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
     private List<Employee> employees;
     private View view;
     private EmployeeSearchFragment fragment;
+    private boolean forContact;
 
-    public EmployeeSearchAdapter(List<Employee> employees, EmployeeSearchFragment fragment) {
+    public EmployeeSearchAdapter(List<Employee> employees, EmployeeSearchFragment fragment, boolean forContract) {
         this.employees = employees;
         this.fragment = fragment;
+        this.forContact = forContract;
+    }
+
+    public EmployeeSearchAdapter(List<Employee> employees, boolean forContract) {
+        this.employees = employees;
+        this.forContact = forContract;
     }
 
     @NonNull
@@ -45,13 +56,14 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
                 .inflate(R.layout.employee_card, parent, false);
         this.view = view;
 
-        return new ViewHolder(view, fragment);
+        return new ViewHolder(view, fragment, forContact);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Employee emp = employees.get(position);
         holder.setEmployeeId(emp.getEmployeeId());
+        holder.setEmployee(emp);
         String name = emp.getName().getFirst() + " " + emp.getName().getLast();
         String city = emp.getLocation().getCity() + ", " + emp.getLocation().getCountry();
         String phone = emp.getCell() + " / " + emp.getPhone();
@@ -86,11 +98,16 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
         private TextView employeeCityTxt;
         private TextView employeePhoneTxt;
         private TextView employeeMemberSinceTxt;
+        private TextView phoneHeader;
+        private TextView memberHeader;
         private ImageView employeeImg;
+        private Button callBtn;
+        private Button emailBtn;
         private EmployeeSearchFragment frg;
         private int id;
+        private Employee emp;
 
-        public ViewHolder(@NonNull View view, EmployeeSearchFragment frg) {
+        public ViewHolder(@NonNull View view, EmployeeSearchFragment frg, boolean forContract) {
             super(view);
             this.frg = frg;
             this.employeeNameTxt = view.findViewById(R.id.employee_card_name);
@@ -98,13 +115,51 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
             this.employeePhoneTxt = view.findViewById(R.id.employee_card_phone);
             this.employeeMemberSinceTxt = view.findViewById(R.id.employee_card_member_since);
             this.employeeImg = view.findViewById(R.id.employee_card_img);
+            this.callBtn = view.findViewById(R.id.employee_card_call_btn);
+            this.emailBtn = view.findViewById(R.id.employee_card_email_btn);
+            this.phoneHeader = view.findViewById(R.id.employee_card_phone_header);
+            this.memberHeader = view.findViewById(R.id.employee_card_member_header);
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            if (forContract) {
+                this.callBtn.setVisibility(View.VISIBLE);
+                this.emailBtn.setVisibility(View.VISIBLE);
+                this.employeePhoneTxt.setVisibility(View.GONE);
+                this.employeeMemberSinceTxt.setVisibility(View.GONE);
+                this.memberHeader.setVisibility(View.GONE);
+                this.phoneHeader.setVisibility(View.GONE);
+            } else {
+                this.callBtn.setVisibility(View.GONE);
+                this.emailBtn.setVisibility(View.GONE);
+                this.employeePhoneTxt.setVisibility(View.VISIBLE);
+                this.employeeMemberSinceTxt.setVisibility(View.VISIBLE);
+                this.memberHeader.setVisibility(View.VISIBLE);
+                this.phoneHeader.setVisibility(View.VISIBLE);
+            }
+
+
+            view.setOnClickListener(v -> {
+                if (frg != null) {
                     frg.onEmployeeClicked(id);
                 }
             });
+
+            callBtn.setOnClickListener( v -> {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + emp.getPhone()));
+                v.getContext().startActivity(intent);
+            });
+
+            emailBtn.setOnClickListener( v -> {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:" + emp.getEmail()));
+                intent.putExtra(Intent.EXTRA_EMAIL, emp.getEmail());
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Hello");
+                v.getContext().startActivity(intent);
+            });
+        }
+
+        public void setEmployee(Employee emp) {
+            this.emp = emp;
         }
 
         public void setEmployeeId(int id) {

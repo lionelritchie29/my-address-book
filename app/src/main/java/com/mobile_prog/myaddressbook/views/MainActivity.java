@@ -1,11 +1,15 @@
 package com.mobile_prog.myaddressbook.views;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.mobile_prog.myaddressbook.Constant;
@@ -39,6 +43,24 @@ public class MainActivity extends AppCompatActivity implements EmployeeSearchFra
             Intent intent = new Intent(this, EmployeeDetailActivity.class);
             intent.putExtra(Constant.EMPLOYEE_ID_KEY, id);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_address_book:
+                Intent intent = new Intent(this, AddressBookActivity.class);
+                startActivity(intent);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

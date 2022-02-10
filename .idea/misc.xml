@@ -5,11 +5,13 @@
       <map>
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/drawable/edit_text_background.xml" value="0.2265625" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout-large/activity_main.xml" value="0.15078125" />
+        <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/activity_address_book.xml" value="0.253125" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/activity_employee_detail.xml" value="0.20104166666666667" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/activity_main.xml" value="0.28125" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/employee_card.xml" value="0.33" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/fragment_employee_detail.xml" value="0.22" />
         <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/layout/fragment_employee_search.xml" value="0.2838541666666667" />
+        <entry key="..\:/Users/lione/AndroidStudioProjects/MyAddressBook/app/src/main/res/menu/menu.xml" value="0.253125" />
       </map>
     </option>
   </component>
