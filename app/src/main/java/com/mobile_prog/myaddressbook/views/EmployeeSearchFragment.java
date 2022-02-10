@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mobile_prog.myaddressbook.Constant;
@@ -24,6 +26,7 @@ import com.mobile_prog.myaddressbook.services.EmployeeService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +42,9 @@ public class EmployeeSearchFragment extends Fragment {
     private EmployeeListListener listener;
     private RecyclerView rv = null;
     private TextView username;
+    private EditText searchEdt;
+    private Button searchBtn;
+    private List<Employee> employees;
 
     public EmployeeSearchFragment() {
         // Required empty public constructor
@@ -76,8 +82,9 @@ public class EmployeeSearchFragment extends Fragment {
                 if (response.isSuccessful())
                 {
                     Response resp = response.body();
-                    List<Employee> employees = resp.getEmployees();
-                    EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(employees, fragment, false);
+                    List<Employee> emps = resp.getEmployees();
+                    employees = emps;
+                    EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(emps, fragment, false);
                     rv.setLayoutManager(new LinearLayoutManager(getContext()));
                     rv.setAdapter(adapter);
                     username.setText(resp.getNama() + " (" + resp.getNim() + ")");
@@ -101,7 +108,35 @@ public class EmployeeSearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_employee_search, container, false);
         this.rv = view.findViewById(R.id.employee_search_rv);
         this.username = view.findViewById(R.id.employee_search_name);
+        this.searchBtn = view.findViewById(R.id.employee_search_btn);
+        this.searchEdt = view.findViewById(R.id.employee_search_edt);
+
+        this.searchBtn.setOnClickListener(v -> {
+            String text = this.searchEdt.getText().toString().toLowerCase();
+
+            if (this.searchBtn.getText().toString().equals("Reset")) {
+                this.searchEdt.setText("");
+                this.searchBtn.setText("Search");
+                this.rv.setAdapter(new EmployeeSearchAdapter(employees, this, false));
+            } else {
+                List<Employee> filteredEmployees = new Vector<>();
+                for (Employee emp: employees) {
+                    String name = emp.getName().getFirst() + " " + emp.getName().getLast();
+                    name = name.toLowerCase();
+                    if (name.contains(text)) {
+                        filteredEmployees.add(emp);
+                    }
+                }
+                this.rv.setAdapter(new EmployeeSearchAdapter(filteredEmployees, this, false));
+                this.searchBtn.setText("Reset");
+            }
+
+
+        });
+
         fetchEmployees();
+
+
         return view;
     }
 }
