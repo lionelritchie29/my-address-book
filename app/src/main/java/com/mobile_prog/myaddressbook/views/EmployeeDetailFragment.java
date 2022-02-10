@@ -2,6 +2,7 @@ package com.mobile_prog.myaddressbook.views;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -46,6 +47,9 @@ public class EmployeeDetailFragment extends Fragment {
 
     public EmployeeDetailFragment(int employeeId) {
         this.employeeId = employeeId;
+    }
+    public EmployeeDetailFragment() {
+
     }
 
     private void fetchEmployee(int id) {
@@ -118,6 +122,10 @@ public class EmployeeDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            employeeId = savedInstanceState.getInt("id");
+        }
+
         View view = inflater.inflate(R.layout.fragment_employee_detail, container, false);
         initializeMap(view, savedInstanceState);
         nameTv = view.findViewById(R.id.employee_detail_name);
@@ -127,5 +135,11 @@ public class EmployeeDetailFragment extends Fragment {
         emailTv = view.findViewById(R.id.employee_detail_email);
         fetchEmployee(employeeId);
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("id", employeeId);
     }
 }
