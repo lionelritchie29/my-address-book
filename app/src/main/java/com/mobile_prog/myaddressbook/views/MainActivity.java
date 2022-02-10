@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
+import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
 
 public class MainActivity extends AppCompatActivity implements EmployeeSearchFragment.EmployeeListListener{
@@ -19,11 +22,19 @@ public class MainActivity extends AppCompatActivity implements EmployeeSearchFra
 
     @Override
     public void itemClicked(int id) {
-        EmployeeDetailFragment fragment = new EmployeeDetailFragment(id);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.addToBackStack(null);
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
+        View fragmentContainer = findViewById(R.id.fragment_container);
+
+        if (fragmentContainer != null) { // large screen
+            EmployeeDetailFragment fragment = new EmployeeDetailFragment(id);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.addToBackStack(null);
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.commit();
+        } else { // small
+            Intent intent = new Intent(this, EmployeeDetailActivity.class);
+            intent.putExtra(Constant.EMPLOYEE_ID_KEY, id);
+            startActivity(intent);
+        }
     }
 }

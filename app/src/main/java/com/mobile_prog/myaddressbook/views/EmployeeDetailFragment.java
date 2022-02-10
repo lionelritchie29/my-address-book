@@ -52,6 +52,10 @@ public class EmployeeDetailFragment extends Fragment {
 
     }
 
+    public void setEmployee(int id) {
+        this.employeeId = id;
+    }
+
     private void fetchEmployee(int id) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.API_URL)
