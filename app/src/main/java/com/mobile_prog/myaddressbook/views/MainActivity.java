@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
+import com.mobile_prog.myaddressbook.services.DatabaseSyncService;
 
 public class MainActivity extends AppCompatActivity implements EmployeeSearchFragment.EmployeeListListener{
 
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity implements EmployeeSearchFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        Intent syncServiceIntent = new Intent(this, DatabaseSyncService.class);
+        startService(syncServiceIntent);
     }
 
     @Override

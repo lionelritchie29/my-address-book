@@ -2,7 +2,6 @@ package com.mobile_prog.myaddressbook.models;
 
 public class Employee {
     private int employeeId;
-    private String gender;
     private EmployeeName name;
     private EmployeeLocation location;
     private RegisterInfo registered;
@@ -11,20 +10,20 @@ public class Employee {
     private PictureUrl picture;
     private String email;
 
+    public Employee() {
+        name = new EmployeeName();
+        registered = new RegisterInfo();
+        picture = new PictureUrl();
+        location = new EmployeeLocation();
+        location.coordinates = new Coordinate();
+    }
+
     public int getEmployeeId() {
         return employeeId;
     }
 
     public void setEmployeeId(int employeeId) {
         this.employeeId = employeeId;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public EmployeeName getName() {
@@ -84,17 +83,8 @@ public class Employee {
     }
 
     public class EmployeeName {
-        private String title;
         private String first;
         private String last;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
 
         public String getFirst() {
             return first;
@@ -115,9 +105,7 @@ public class Employee {
 
     public class EmployeeLocation {
         private String city;
-        private String state;
         private String country;
-        private String postcode;
         private Coordinate coordinates;
 
         public String getCity() {
@@ -128,28 +116,12 @@ public class Employee {
             this.city = city;
         }
 
-        public String getState() {
-            return state;
-        }
-
-        public void setState(String state) {
-            this.state = state;
-        }
-
         public String getCountry() {
             return country;
         }
 
         public void setCountry(String country) {
             this.country = country;
-        }
-
-        public String getPostcode() {
-            return postcode;
-        }
-
-        public void setPostcode(String postcode) {
-            this.postcode = postcode;
         }
 
         public Coordinate getCoordinates() {
@@ -183,17 +155,7 @@ public class Employee {
     }
 
     public class PictureUrl {
-        private String large;
         private String medium;
-        private String thumbnail;
-
-        public String getLarge() {
-            return large;
-        }
-
-        public void setLarge(String large) {
-            this.large = large;
-        }
 
         public String getMedium() {
             return medium;
@@ -202,19 +164,10 @@ public class Employee {
         public void setMedium(String medium) {
             this.medium = medium;
         }
-
-        public String getThumbnail() {
-            return thumbnail;
-        }
-
-        public void setThumbnail(String thumbnail) {
-            this.thumbnail = thumbnail;
-        }
     }
 
     public class RegisterInfo {
         private String date;
-        private int age;
 
         public String getDate() {
             return date;
@@ -222,14 +175,6 @@ public class Employee {
 
         public void setDate(String date) {
             this.date = date;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
         }
     }
 }

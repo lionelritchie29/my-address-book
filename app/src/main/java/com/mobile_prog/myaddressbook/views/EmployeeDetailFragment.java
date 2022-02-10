@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
 import com.mobile_prog.myaddressbook.adapters.EmployeeSearchAdapter;
+import com.mobile_prog.myaddressbook.database.DatabaseHelper;
 import com.mobile_prog.myaddressbook.models.Employee;
 import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.EmployeeService;
@@ -44,6 +47,7 @@ public class EmployeeDetailFragment extends Fragment {
     private TextView memberSinceTv;
     private MapView mapView;
     private GoogleMap googleMap;
+    private Button addAddressBookBtn;
 
     public EmployeeDetailFragment(int employeeId) {
         this.employeeId = employeeId;
@@ -137,6 +141,19 @@ public class EmployeeDetailFragment extends Fragment {
         phoneTv = view.findViewById(R.id.employee_detail_phone);
         memberSinceTv = view.findViewById(R.id.employee_detail_member_since);
         emailTv = view.findViewById(R.id.employee_detail_email);
+        addAddressBookBtn = view.findViewById(R.id.employee_detail_add);
+
+        addAddressBookBtn.setOnClickListener(v -> {
+            DatabaseHelper db = new DatabaseHelper(getContext());
+            v.setEnabled(false);
+            if (db.addEmployeeToAddressBook(employeeId)) {
+                Toast.makeText(getContext(), "Saved to address book!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "This employee is already in your address book!", Toast.LENGTH_SHORT).show();
+            }
+            v.setEnabled(true);
+        });
+
         fetchEmployee(employeeId);
         return view;
     }

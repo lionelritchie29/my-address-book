@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
 import com.mobile_prog.myaddressbook.adapters.EmployeeSearchAdapter;
+import com.mobile_prog.myaddressbook.database.DatabaseHelper;
 import com.mobile_prog.myaddressbook.models.Employee;
 import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.EmployeeService;
@@ -35,7 +36,6 @@ public class EmployeeSearchFragment extends Fragment {
     }
 
     private EmployeeListListener listener;
-
     private RecyclerView rv = null;
 
     public EmployeeSearchFragment() {
