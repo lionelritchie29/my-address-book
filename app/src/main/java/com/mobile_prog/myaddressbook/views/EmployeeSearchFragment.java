@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mobile_prog.myaddressbook.Constant;
 import com.mobile_prog.myaddressbook.R;
@@ -37,6 +38,7 @@ public class EmployeeSearchFragment extends Fragment {
 
     private EmployeeListListener listener;
     private RecyclerView rv = null;
+    private TextView username;
 
     public EmployeeSearchFragment() {
         // Required empty public constructor
@@ -78,6 +80,7 @@ public class EmployeeSearchFragment extends Fragment {
                     EmployeeSearchAdapter adapter = new EmployeeSearchAdapter(employees, fragment, false);
                     rv.setLayoutManager(new LinearLayoutManager(getContext()));
                     rv.setAdapter(adapter);
+                    username.setText(resp.getNama() + " (" + resp.getNim() + ")");
                 }
                 else
                 {
@@ -97,6 +100,7 @@ public class EmployeeSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee_search, container, false);
         this.rv = view.findViewById(R.id.employee_search_rv);
+        this.username = view.findViewById(R.id.employee_search_name);
         fetchEmployees();
         return view;
     }

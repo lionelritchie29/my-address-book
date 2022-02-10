@@ -32,6 +32,7 @@ public class AddressBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_book);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.rv = findViewById(R.id.address_book_rv);
         fetchAddressBook();
     }
@@ -78,5 +79,11 @@ public class AddressBookActivity extends AppCompatActivity {
                 Log.i("Hehe", "Network Error :: " + t.getLocalizedMessage());
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

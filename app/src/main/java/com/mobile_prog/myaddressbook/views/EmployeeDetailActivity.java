@@ -14,7 +14,14 @@ public class EmployeeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_detail);
         EmployeeDetailFragment fragment = (EmployeeDetailFragment) getSupportFragmentManager().findFragmentById(R.id.employee_detail_fragment);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         int employeeId = getIntent().getExtras().getInt(Constant.EMPLOYEE_ID_KEY);
         fragment.setEmployee(employeeId);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
