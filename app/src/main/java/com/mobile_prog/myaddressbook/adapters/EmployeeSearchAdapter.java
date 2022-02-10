@@ -13,13 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.mobile_prog.myaddressbook.R;
 import com.mobile_prog.myaddressbook.models.Employee;
 import com.mobile_prog.myaddressbook.models.Response;
 import com.mobile_prog.myaddressbook.services.ImageLoaderService;
 import com.mobile_prog.myaddressbook.views.EmployeeSearchFragment;
 import com.mobile_prog.myaddressbook.views.MainActivity;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -67,24 +70,16 @@ public class EmployeeSearchAdapter extends RecyclerView.Adapter<EmployeeSearchAd
         String name = emp.getName().getFirst() + " " + emp.getName().getLast();
         String city = emp.getLocation().getCity() + ", " + emp.getLocation().getCountry();
         String phone = emp.getCell() + " / " + emp.getPhone();
-        Date date = new Date();
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        try {
-            date = format.parse(emp.getRegistered().getDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
-        String formattedDate = (String) android.text.format.DateFormat.format("MMM", date);
-        formattedDate += ", ";
-        formattedDate += (String) android.text.format.DateFormat.format("dd", date);
+        DateTime date = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC).parseDateTime(emp.getRegistered().getDate());
 
+        String formattedDate = date.toString("MMM") + ", " + date.toString("dd");
         holder.getEmployeeNameTxt().setText(name);
         holder.getEmployeeCityTxt().setText(city);
         holder.getEmployeePhoneTxt().setText(phone);
         holder.getEmployeeMemberSinceTxt().setText(formattedDate);
-        Glide.with(view).load(emp.getPicture().getMedium()).placeholder(R.drawable.ic_launcher_background).into(holder.getEmployeeImgView());
+        new ImageLoaderService(holder.getEmployeeImgView()).execute(emp.getPicture().getMedium());
     }
 
     @Override

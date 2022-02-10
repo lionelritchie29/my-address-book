@@ -27,10 +27,12 @@ public class ImageLoaderService extends AsyncTask<String, Void, Bitmap> {
             Log.e("Error: ", e.getMessage());
             e.printStackTrace();
         }
-
-        imgView.setImageBitmap(bm);
         return bm;
     }
 
-
+    @Override
+    protected void onPostExecute(Bitmap bitmap) {
+        imgView.setImageBitmap(bitmap);
+        super.onPostExecute(bitmap);
+    }
 }
